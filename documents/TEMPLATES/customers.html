@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>نظام تسليم وتسلم الوثائق</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Tahoma;
+        }
+
+        body{
+            background:#f4f7fb;
+            padding:20px;
+        }
+
+        .container{
+            width:95%;
+            margin:auto;
+        }
+
+        .header{
+            background:white;
+            padding:25px;
+            border-radius:15px;
+            margin-bottom:20px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            box-shadow:0 2px 10px rgba(0,0,0,.08);
+        }
+
+        .header h1{
+            color:#003b8e;
+            font-size:42px;
+        }
+
+        .header p{
+            color:#666;
+            margin-top:10px;
+            font-size:18px;
+        }
+
+        .main-card{
+            background:white;
+            border-radius:20px;
+            padding:20px;
+            box-shadow:0 2px 15px rgba(0,0,0,.08);
+        }
+
+        .title-bar{
+            background:#003b8e;
+            color:white;
+            padding:15px;
+            border-radius:12px;
+            font-size:24px;
+            font-weight:bold;
+            margin-bottom:25px;
+        }
+
+        /* SEARCH */
+        .search-section{
+            display:grid;
+            grid-template-columns: repeat(5,1fr);
+            gap:15px;
+            margin-bottom:25px;
+            align-items:end;
+        }
+
+        .field{
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+        }
+
+        .field label{
+            font-size:13px;
+            color:#003b8e;
+            font-weight:bold;
+        }
+
+        .field input{
+            padding:12px;
+            border:1px solid #dcdcdc;
+            border-radius:10px;
+            outline:none;
+            font-size:14px;
+        }
+
+        .search-btn{
+            padding:12px;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+            font-size:16px;
+            font-weight:bold;
+            color:white;
+            background:linear-gradient(135deg,#003b8e,#0050c0);
+        }
+
+        .search-btn:hover{
+            transform:translateY(-2px);
+        }
+
+        /* 🔥 TABLE WRAPPER (حل البطء) */
+        .table-wrapper{
+            max-height:600px;
+            overflow-y:auto;
+            border-radius:15px;
+            border:1px solid #eee;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        thead{
+            position:sticky;
+            top:0;
+            background:#003b8e;
+            color:white;
+            z-index:2;
+        }
+
+        th,td{
+            padding:12px;
+            text-align:center;
+            font-size:13px;
+            border-bottom:1px solid #eee;
+            white-space:nowrap;
+        }
+
+        tbody tr:hover{
+            background:#f5f9ff;
+        }
+
+        /* checkbox */
+        .chk{
+            width:18px;
+            height:18px;
+            cursor:pointer;
+        }
+
+        .empty-message{
+            text-align:center;
+            padding:50px;
+            color:#777;
+            font-size:18px;
+        }
+
+        .actions{
+            margin-top:25px;
+            display:flex;
+            gap:15px;
+        }
+
+        .btn{
+            padding:12px 20px;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+            color:white;
+        }
+
+        .btn-send{background:#0b7a3d;}
+        .btn-print{background:#6a35c1;}
+        .btn-report{background:#d48806;}
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <div>
+            <h1>نظام تسليم وتسلم الوثائق</h1>
+            <p>شاشة الإدارات الفنية - تسليم الوثائق</p>
+        </div>
+    </div>
+
+    <div class="main-card">
+
+        <div class="title-bar">شاشة متابعة الوثائق الجاهزة</div>
+
+        <!-- SEARCH -->
+        <div class="search-section">
+
+            <div class="field">
+                <label>تاريخ الإصدار</label>
+                <input type="date" name="issue_date">
+            </div>
+
+            <div class="field">
+                <label>اسم المستخدم الحالي</label>
+                <input type="text" name="modified_by">
+            </div>
+
+            <div class="field">
+                <label>نوع الوسيط</label>
+                <input type="text" name="agent_type">
+            </div>
+
+            <div class="field">
+                <label>نوع التأمين</label>
+                <input type="text" name="class_code">
+            </div>
+
+            <button class="search-btn">بحث</button>
+
+        </div>
+
+        <!-- TABLE -->
+        {% if data %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" onclick="toggleAll(this)" class="chk">
+                        </th>
+                        <th>SEGMENT</th>
+                        <th>ISSUE DATE</th>
+                        <th>SUM INSURED</th>
+                        <th>EX RATE</th>
+                        <th>GROSS PREMIUM</th>
+                        <th>NET PREMIUM</th>
+                        <th>MODIFIED BY</th>
+                        <th>CUSTOMER</th>
+                        <th>CLASS CODE</th>
+                        <th>ENDORSEMENT</th>
+                        <th>AGENT TYPE</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for item in data %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="row-check chk">
+                        </td>
+                        <td>{{ item.segment_code }}</td>
+                        <td>{{ item.issue_date }}</td>
+                        <td>{{ item.suminsured }}</td>
+                        <td>{{ item.exrate }}</td>
+                        <td>{{ item.gross_premium }}</td>
+                        <td>{{ item.net_premium }}</td>
+                        <td>{{ item.modified_by }}</td>
+                        <td>{{ item.customer_name }}</td>
+                        <td>{{ item.class_code }}</td>
+                        <td>{{ item.endorsement_type }}</td>
+                        <td>{{ item.agent_type }}</td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-message">لا توجد بيانات</div>
+
+        {% endif %}
+
+        <!-- ACTIONS -->
+        <div class="actions">
+
+    <button class="btn btn-send">إرسال للتحصيل</button>
+
+    <a href="/customers/pdf/" class="btn btn-print" style="text-decoration:none;display:inline-block;text-align:center;">
+        طباعة التقرير
+    </a>
+
+    <a href="/customers/excel/" class="btn btn-report" style="text-decoration:none;display:inline-block;text-align:center;">
+        استخراج تقرير
+    </a>
+
+</div>
+
+    </div>
+
+</div>
+
+<script>
+function toggleAll(source){
+    const checkboxes = document.querySelectorAll('.row-check');
+    checkboxes.forEach(cb => cb.checked = source.checked);
+}
+</script>
+
+</body>
+</html>
